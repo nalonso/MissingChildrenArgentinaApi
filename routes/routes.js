@@ -2,13 +2,23 @@ var request = require("./../controllers/tools/Request");
 
 var appRouter = function (app) {
     app.get("/", function (req, res) {
-        request("", function (data) {
+        var ids = [];
+        request("perdidos", function (data) {
             //console.log(data.indexOf("<table"));
             //console.log(data.substr(lastIndexOf(data, "</table>"),8));
             //console.log(data.substring(data.indexOf("<table"), lastIndexOf(data, "</table>") + 8));
-            var ids = parseTable(data.substring(data.indexOf("<table") + 6, lastIndexOf(data, "</table>")));;
-            console.log(ids);
-            res.status(200).send(data);
+            var currents = parseTable(data.substring(data.indexOf("<table") + 6, lastIndexOf(data, "</table>")));;
+            currents.forEach((elem)=>{ ids.push(elem) });
+
+            request("mayores", function (data) {
+                var currents = parseTable(data.substring(data.indexOf("<table") + 6, lastIndexOf(data, "</table>")));;
+                currents.forEach((elem) => { ids.push(elem) });
+                ids.sort(function compareNumbers(a, b) {
+                    return a - b;
+                });
+                console.log(ids);
+                res.status(200).send(data);
+            });
         });
     });
 }
@@ -21,7 +31,7 @@ function parseTable (string)
     var currentId = data.substring(data.indexOf('datos.php?action=view&id=') + 25, data.indexOf('datos.php?') + data.substr(data.indexOf('datos.php?')).indexOf('">'));
     if(currentId)
     {
-        ids.push(currentId);
+        ids.push(currentId * 1);
         var recurrent = parseTable(string.substring(string.indexOf("</table>")+8, string.length));
         if(recurrent.length > 0){
             recurrent.forEach((elem) => {
