@@ -1,9 +1,12 @@
-var http = require('http');
+var http = require("http"),
+    https = require('https'),
+    constants = require("./constants");
 
-var request = function (category, callback){
+var request = function (url, method, ){
     var options = {
         host: "www.missingchildren.org.ar",
-        path: "/listado.php?categoria=" + category
+        path: "/listado.php?categoria=" + category,
+        method: method || constants.METHOD.GET
     };
     var request = http.request(options, function (res) {
         var data = "";
