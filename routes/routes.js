@@ -3,23 +3,7 @@ var request = require("./../controllers/tools/Request");
 var appRouter = function (app) {
     app.get("/", function (req, res) {
         var ids = [];
-        request("perdidos", function (data) {
-            //console.log(data.indexOf("<table"));
-            //console.log(data.substr(lastIndexOf(data, "</table>"),8));
-            //console.log(data.substring(data.indexOf("<table"), lastIndexOf(data, "</table>") + 8));
-            var currents = parseTable(data.substring(data.indexOf("<table") + 6, lastIndexOf(data, "</table>")));;
-            currents.forEach((elem)=>{ ids.push(elem) });
-
-            request("mayores", function (data) {
-                var currents = parseTable(data.substring(data.indexOf("<table") + 6, lastIndexOf(data, "</table>")));;
-                currents.forEach((elem) => { ids.push(elem) });
-                ids.sort(function compareNumbers(a, b) {
-                    return a - b;
-                });
-                console.log(ids);
-                res.status(200).send(data);
-            });
-        });
+        res.status(200).send("hola");
     });
 }
 

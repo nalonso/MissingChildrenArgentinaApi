@@ -5,8 +5,8 @@ var http = require("http"),
 var request = function (url, method){
     var options = {
         host: "www.missingchildren.org.ar",
-        path: "/listado.php?categoria=" + category,
-        method: method || constants.METHOD.GET
+        path: "/listado.php?categoria=perdidos",
+        method: constants.METHOD.GET
     };
     var request = http.request(options, function (res) {
         var data = "";
@@ -14,7 +14,7 @@ var request = function (url, method){
             data += chunk;
         });
         res.on("end", function () {
-            callback(data);
+            //callback(data);
         });
     });
     request.on("error", function (e) {
