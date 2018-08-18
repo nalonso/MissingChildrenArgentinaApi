@@ -2,7 +2,7 @@ var http = require("http"),
     https = require('https'),
     constants = require("./constants");
 
-var request = function (url, method, ){
+var request = function (url, method){
     var options = {
         host: "www.missingchildren.org.ar",
         path: "/listado.php?categoria=" + category,
