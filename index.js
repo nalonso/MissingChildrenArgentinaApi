@@ -8,6 +8,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 routes(app);
 
-var server = app.listen(80, function() {
-	console.log("app running on port.", server.address().port);
+var server = app.listen(process.env.PORT || 3001, function() {
+  console.log("app running on port.", server.address().port);
 });
