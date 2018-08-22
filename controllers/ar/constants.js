@@ -4,8 +4,8 @@ const CONSTANTS = {
     E_MAIL: 'info@missingchildren.org.ar',
     URL: url,
     RESOURCES: {
-        LIST: `${url}/listado.php?categoria=`,
-        DATA: `${url}/datos.php?action=view&id=`,
+        LIST: `/listado.php?categoria=`,
+        DATA: `/datos.php?action=view&id=`,
         POSTER: `${url}/poster?id=`,
         IMAGES: `${url}/imagench/`
     },
@@ -18,6 +18,29 @@ const CONSTANTS = {
         PATH: `${url}/images/lgp.jpg`,
         WIDTH: 661,
         HEIGHT: 137
+    },
+    SEPARATOR: {
+        ITEM: {
+            BEGIN: '<table',
+            END: '</table>'
+        },
+        ID: {
+            BEGIN: 'datos.php?action=view&id=',
+            END: '">'
+        },
+        TABLE_DATA: {
+            BEGIN: 'id="table7"',
+            END: '</table>'
+        },
+        TABLE_TD: {
+            BEGIN: '<td',
+            END: '</td>'
+        },
+        IMG_DATA: {
+            BEGIN: '<img src="imagench/',
+            END: '" width="'
+        }
     }
 };
+
 module.exports = CONSTANTS;

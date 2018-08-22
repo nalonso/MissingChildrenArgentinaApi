@@ -2,25 +2,27 @@ var http = require("http"),
     https = require('https'),
     constants = require("./constants");
 
-var request = function (url, method){
+var request = function (host, resource, method){
     var options = {
-        host: "www.missingchildren.org.ar",
-        path: "/listado.php?categoria=perdidos",
-        method: constants.METHOD.GET
+        host: host || "" ,
+        path: resource || "/",
+        method: method || constants.METHOD.GET
     };
-    var request = http.request(options, function (res) {
-        var data = "";
-        res.on("data", function (chunk) {
-            data += chunk;
+    return new Promise((resolve, reject)=>{
+        var request = http.request(options, function (res) {
+            var data = "";
+            res.on("data", function (chunk) {
+                data += chunk;
+            });
+            res.on("end", function () {
+                resolve(data);
+            });
         });
-        res.on("end", function () {
-            //callback(data);
+        request.on("error", function (e) {
+            reject(e.message);
         });
+        request.end();
     });
-    request.on("error", function (e) {
-        console.log(e.message);
-    });
-    request.end();
 }
 
 
