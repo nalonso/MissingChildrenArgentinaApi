@@ -28,8 +28,12 @@ const CONSTANTS = {
             BEGIN: 'datos.php?action=view&id=',
             END: '">'
         },
-        TABLE_DATA: {
+        TABLE7_DATA: {
             BEGIN: 'id="table7"',
+            END: '</table>'
+        },
+        TABLE11_DATA: {
+            BEGIN: 'id="table11"',
             END: '</table>'
         },
         TABLE_TD: {
@@ -37,7 +41,7 @@ const CONSTANTS = {
             END: '</td>'
         },
         IMG_DATA: {
-            BEGIN: '<img src="imagench/',
+            BEGIN: 'src="imagench/',
             END: '" width="'
         }
     }

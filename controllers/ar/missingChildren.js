@@ -26,69 +26,133 @@ var missingChildren = function()
         return ids;
     };
 
-    var parseData = function (htmlDom) {
+    var parseData = function (htmlDom, idPerson) {
         if (htmlDom.indexOf(constants.SEPARATOR.ITEM.BEGIN))
         {
+            var table11 = htmlDom.indexOf(constants.SEPARATOR.TABLE11_DATA.BEGIN) > -1;
             if (htmlDom.indexOf(constants.SEPARATOR.ITEM.BEGIN) < 0) { return {}; }
             var image = htmlDom.substring(
                             htmlDom.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN) + constants.SEPARATOR.IMG_DATA.BEGIN.length,
                             htmlDom.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN) + htmlDom.substr(htmlDom.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN)).indexOf(constants.SEPARATOR.IMG_DATA.END)
                         );
+            var imageProjected = '';
+            if(table11)
+            {
+                var secondImg = htmlDom.sub(
+                                    htmlDom.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN) + constants.SEPARATOR.IMG_DATA.BEGIN.length
+                                );
+                imageProjected = secondImg.substring(
+                                    secondImg.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN) + constants.SEPARATOR.IMG_DATA.BEGIN.length,
+                                    secondImg.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN) + secondImg.substr(secondImg.indexOf(constants.SEPARATOR.IMG_DATA.BEGIN)).indexOf(constants.SEPARATOR.IMG_DATA.END)
+                                );
+            }
+            var tableBegin = constants.SEPARATOR.TABLE7_DATA.BEGIN,
+                tableEnd = constants.SEPARATOR.TABLE7_DATA.END;
+            if (table11)
+            {
+                tableBegin = constants.SEPARATOR.TABLE11_DATA.BEGIN;
+                tableEnd = constants.SEPARATOR.TABLE11_DATA.END;
+            }
             var table = htmlDom.substring(
-                            htmlDom.indexOf(constants.SEPARATOR.TABLE_DATA.BEGIN) + constants.SEPARATOR.TABLE_DATA.BEGIN.length,
-                            htmlDom.indexOf(constants.SEPARATOR.TABLE_DATA.END)
+                            htmlDom.indexOf(tableBegin) + tableBegin.length,
+                            htmlDom.indexOf(tableEnd)
                         );
-            var name = table.substring(
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
-                        );
+            var name = getDataFromTd(table);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            var from = table.substring(
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
-                        );
+            var from = getDataFromTd(table);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            var photoAge = table.substring(
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
-                        );
+            var photoAge = getDataFromTd(table);
+            var projectedAge = '';
+            if(table11)
+            {
+                table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+                table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+                projectedAge = getDataFromTd(table);
+            }
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            var currentAge = table.substring(
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
-                        );
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            var birthday = table.substring(
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
-                        );
+            var currentAge = getDataFromTd(table);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
             table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            var location = table.substring(
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
-                            table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
-                        );
+            var birthday = getDataFromTd(table);
+            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            var location = getDataFromTd(table);
+            var replace = {
+                find: [
+                    ' de ',
+                    'Enero',
+                    'Febrero',
+                    'Marzo',
+                    'Abril',
+                    'Mayo',
+                    'Junio',
+                    'Julio',
+                    'Agosto',
+                    'Septiembre',
+                    'Octubre',
+                    'Noviembre',
+                    'Diciembre',
+                    '&nbsp;',
+                    '  ',
+                    '<br>',
+                    '&ntilde;',
+                    'años',
+                    'a�os'
+                ],
+                to: [
+                    '/',
+                    '01',
+                    '02',
+                    '03',
+                    '04',
+                    '05',
+                    '06',
+                    '07',
+                    '08',
+                    '09',
+                    '10',
+                    '11',
+                    '12',
+                    '',
+                    ' ',
+                    '',
+                    'ñ',
+                    '',
+                    ''
+                ]
+            };
             var toReturn = {
-                photo: image.trim(),
-                name: name.trim(),
-                missingFrom: from.trim(),
-                age: {
-                    photo: photoAge.replace("&ntilde;", "ñ").trim(),
-                    current: currentAge.replace("&ntilde;", "ñ").trim()
+                id: idPerson,
+                photo: {
+                    last: image.trim(),
+                    projected: imageProjected.trim()
                 },
-                birthday: birthday.trim(),
-                location: location.replace("<br>&nbsp;", "").trim()
+                name: name.replaceAll(replace.find, replace.to).trim(),
+                missingFrom: from.replaceAll(replace.find, replace.to).trim(),
+                age: {
+                    photo: photoAge.replaceAll(replace.find, replace.to).trim(),
+                    current: currentAge.replaceAll(replace.find, replace.to).trim(),
+                    projected: projectedAge.replaceAll(replace.find, replace.to).trim()
+                },
+                birthday: birthday.replaceAll(replace.find, replace.to).trim(),
+                location: location.replaceAll(replace.find, replace.to).trim()
             };
             return toReturn;
         }
         return {};
+    }
+
+    var getDataFromTd = function (tableDom) {
+        return tableDom.substring(
+            tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + tableDom.substr(tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
+            tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + tableDom.substr(tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
+        );
     }
 
     var getIds = function()
@@ -111,9 +175,10 @@ var missingChildren = function()
     var TakeSome = function () {
         return new Promise((resolve, reject) => {
             getIds().then((ids) => {
-                request(constants.URL, `${constants.RESOURCES.DATA}${ids.takeSome()}`).then((res)=>{
-                    var person = parseData(res);
-                    if (person.name != null && person.name.toLowerCase().indexOf("encontrada")>-1)
+                var idToSend = ids.takeSome();
+                request(constants.URL, `${constants.RESOURCES.DATA}${idToSend}`).then((res)=>{
+                    var person = parseData(res, idToSend);
+                    if (person.name != null && person.name.toLowerCase().indexOf("encontrad")>-1)
                     {
                         return TakeSome().then((person)=>{
                             resolve(person)

@@ -15,6 +15,19 @@ String.prototype.lastIndexOf = function (term) {
     return this.length - (idx + term.length);
 };
 
+String.prototype.replaceAll = function (toFind, replaceFor) {
+    if (toFind.constructor === Array && replaceFor.constructor === Array)
+    {
+        var toReturn = this;
+        toFind.forEach((element, idx) => {
+            toReturn = toReturn.replaceAll(element, replaceFor[idx]);
+        });
+        return toReturn;
+    } else {
+        return this.split(toFind).join(replaceFor);
+    }
+};
+
 /* Array Extenders */
 
 Array.prototype.takeSome = function () {
