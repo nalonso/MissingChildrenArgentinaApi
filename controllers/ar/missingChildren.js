@@ -58,74 +58,34 @@ var missingChildren = function()
                             htmlDom.indexOf(tableEnd)
                         );
             var name = getDataFromTd(table);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = cutTable(table);
+            table = cutTable(table);
             var from = getDataFromTd(table);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = cutTable(table);
+            table = cutTable(table);
+            table = cutTable(table);
             var photoAge = getDataFromTd(table);
             var projectedAge = '';
             if(table11)
             {
-                table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-                table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+                table = cutTable(table);
+                table = cutTable(table);
                 projectedAge = getDataFromTd(table);
             }
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = cutTable(table);
+            table = cutTable(table);
             var currentAge = getDataFromTd(table);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = cutTable(table);
+            table = cutTable(table);
+            table = cutTable(table);
             var birthday = getDataFromTd(table);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
-            table = table.substr(table.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length);
+            table = cutTable(table);
+            table = cutTable(table);
+            table = cutTable(table);
             var location = getDataFromTd(table);
             var replace = {
-                find: [
-                    ' de ',
-                    'Enero',
-                    'Febrero',
-                    'Marzo',
-                    'Abril',
-                    'Mayo',
-                    'Junio',
-                    'Julio',
-                    'Agosto',
-                    'Septiembre',
-                    'Octubre',
-                    'Noviembre',
-                    'Diciembre',
-                    '&nbsp;',
-                    '  ',
-                    '<br>',
-                    '&ntilde;',
-                    'años',
-                    'a�os'
-                ],
-                to: [
-                    '/',
-                    '01',
-                    '02',
-                    '03',
-                    '04',
-                    '05',
-                    '06',
-                    '07',
-                    '08',
-                    '09',
-                    '10',
-                    '11',
-                    '12',
-                    '',
-                    ' ',
-                    '',
-                    'ñ',
-                    '',
-                    ''
-                ]
+                find: [" de ", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre", "&nbsp;", "  ", "<br>", "&ntilde;", "años", "a�os"],
+                to: ["/", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "", " ", "", "ñ", "", ""]
             };
             var toReturn = {
                 id: idPerson,
@@ -141,8 +101,15 @@ var missingChildren = function()
                     projected: projectedAge.replaceAll(replace.find, replace.to).trim()
                 },
                 birthday: birthday.replaceAll(replace.find, replace.to).trim(),
-                location: location.replaceAll(replace.find, replace.to).trim()
+                location: location.replaceAll(replace.find, replace.to).trim(),
+                poster: `${constants.RESOURCES.POSTER}${idPerson}`
             };
+            if (toReturn.photo.last.length > 0) {
+                toReturn.photo.last = `${constants.RESOURCES.IMAGES}${toReturn.photo.last}`;
+            }
+            if (toReturn.photo.projected.length > 0) {
+                toReturn.photo.projected = `${constants.RESOURCES.IMAGES}${toReturn.photo.projected}`;
+            }
             return toReturn;
         }
         return {};
@@ -153,6 +120,10 @@ var missingChildren = function()
             tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + tableDom.substr(tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf('>') + 1,
             tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN) + tableDom.substr(tableDom.indexOf(constants.SEPARATOR.TABLE_TD.BEGIN)).indexOf(constants.SEPARATOR.TABLE_TD.END)
         );
+    }
+
+    var cutTable = function (tableString) {
+        return tableString.substr(tableString.indexOf(constants.SEPARATOR.TABLE_TD.END) + constants.SEPARATOR.TABLE_TD.END.length)
     }
 
     var getIds = function()
@@ -178,8 +149,7 @@ var missingChildren = function()
                 var idToSend = ids.takeSome();
                 request(constants.URL, `${constants.RESOURCES.DATA}${idToSend}`).then((res)=>{
                     var person = parseData(res, idToSend);
-                    if (person.name != null && person.name.toLowerCase().indexOf("encontrad")>-1)
-                    {
+                    if (person.name != null && person.name.toLowerCase().indexOf("encontrad")>-1) {
                         return TakeSome().then((person)=>{
                             resolve(person)
                         });
@@ -190,8 +160,27 @@ var missingChildren = function()
         })
     };
 
+    var TakeById = function (personToFind) {
+        return new Promise((resolve, reject) => {
+            request(constants.URL, `${constants.RESOURCES.DATA}${personToFind}`).then((res) => {
+                var person = parseData(res, idToSend);
+                resolve(person);
+            });
+        })
+    };
+
+    var GetAll = function () {
+        return new Promise((resolve, reject) => {
+            getIds().then((ids) => {
+                resolve(ids);
+            });
+        })
+    };
+
     return {
-        takeSome: TakeSome
+        takeSome: TakeSome,
+        takeById: TakeById,
+        getAll: GetAll
     }
 };
 

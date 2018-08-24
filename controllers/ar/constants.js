@@ -6,7 +6,7 @@ const CONSTANTS = {
     RESOURCES: {
         LIST: `/listado.php?categoria=`,
         DATA: `/datos.php?action=view&id=`,
-        POSTER: `${url}/poster?id=`,
+        POSTER: `${url}/poster.php?id=`,
         IMAGES: `${url}/imagench/`
     },
     CATEGORIES: [
